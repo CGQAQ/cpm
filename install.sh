@@ -390,7 +390,7 @@ create_config() {
 }
 EOF
 
-    chmod 600 "${CONFIG_FILE}"
+    chmod 644 "${CONFIG_FILE}"
     msg_success "Config written to ${CONFIG_FILE}"
 }
 

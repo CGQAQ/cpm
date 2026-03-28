@@ -414,6 +414,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 DynamicUser=yes
+ConfigurationDirectory=shadowsocks-rust
 ExecStart=/usr/local/bin/ssserver -c /etc/shadowsocks-rust/config.json
 Restart=on-failure
 RestartSec=5

@@ -15,7 +15,7 @@ SERVICE_NAME="shadowsocks-rust-server"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 BINARY_NAMES=("ssserver" "sslocal" "ssmanager" "ssurl" "ssservice")
 DEFAULT_PORT=8388
-SCRIPT_VERSION="1.4.0"
+SCRIPT_VERSION="1.4.1"
 DEFAULT_CIPHER="2022-blake3-aes-256-gcm"
 TEMP_DIR=""
 
@@ -705,11 +705,18 @@ install_flow() {
 
 install_script() {
     local target="/usr/bin/ss-installer"
-    local source="${BASH_SOURCE[0]}"
+    local url="https://raw.githubusercontent.com/CGQAQ/ss-installer/main/install.sh"
 
-    install -m 755 "${source}" "${target}"
-    msg_success "Script installed to ${target}"
-    msg_info "You can now run: ss-installer"
+    msg_info "Downloading ss-installer..."
+    if curl -fsSL -o "${target}.tmp" "${url}"; then
+        install -m 755 "${target}.tmp" "${target}"
+        rm -f "${target}.tmp"
+        msg_success "Script installed to ${target}"
+        msg_info "You can now run: ss-installer"
+    else
+        rm -f "${target}.tmp"
+        msg_error "Failed to download script."
+    fi
 }
 
 upgrade_script() {

@@ -15,7 +15,7 @@ SERVICE_NAME="shadowsocks-rust-server"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 BINARY_NAMES=("ssserver" "sslocal" "ssmanager" "ssurl" "ssservice")
 DEFAULT_PORT=8388
-SCRIPT_VERSION="1.1.0"
+SCRIPT_VERSION="1.2.0"
 DEFAULT_CIPHER="2022-blake3-aes-256-gcm"
 TEMP_DIR=""
 
@@ -588,12 +588,18 @@ show_existing_config() {
 
     show_clash_config
 
-    # Show service status
+    # Show service status and management commands
     if systemctl is-active --quiet "${SERVICE_NAME}" 2>/dev/null; then
         echo -e "  Service: ${GREEN}running${NC}"
     else
         echo -e "  Service: ${RED}stopped${NC}"
     fi
+    echo ""
+    echo -e "  ${BOLD}Management commands:${NC}"
+    echo "    systemctl start   ${SERVICE_NAME}"
+    echo "    systemctl stop    ${SERVICE_NAME}"
+    echo "    systemctl restart ${SERVICE_NAME}"
+    echo "    journalctl -u     ${SERVICE_NAME} -f"
     echo ""
     return 0
 }

@@ -15,7 +15,7 @@ SERVICE_NAME="shadowsocks-rust-server"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 BINARY_NAMES=("ssserver" "sslocal" "ssmanager" "ssurl" "ssservice")
 DEFAULT_PORT=8388
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="1.1.0"
 DEFAULT_CIPHER="2022-blake3-aes-256-gcm"
 TEMP_DIR=""
 
@@ -495,6 +495,22 @@ generate_ss_uri() {
     SS_URI="ss://${userinfo}@${SERVER_IP}:${SERVER_PORT}"
 }
 
+show_clash_config() {
+    echo -e "  ${BOLD}Clash/Mihomo Proxy Config:${NC}"
+    echo -e "${YELLOW}"
+    cat << EOF
+proxies:
+- name: "ss-${SERVER_IP}"
+  type: ss
+  server: ${SERVER_IP}
+  port: ${SERVER_PORT}
+  cipher: ${CIPHER}
+  password: "${PSK}"
+  udp: true
+EOF
+    echo -e "${NC}"
+}
+
 show_connection_info() {
     get_public_ip
     generate_ss_uri
@@ -518,6 +534,8 @@ show_connection_info() {
     else
         msg_warn "Install qrencode for QR code display."
     fi
+
+    show_clash_config
 
     echo -e "${BOLD}Management commands:${NC}"
     echo "  systemctl status  ${SERVICE_NAME}"
@@ -567,6 +585,8 @@ show_existing_config() {
         qrencode -t ansiutf8 "${SS_URI}"
         echo ""
     fi
+
+    show_clash_config
 
     # Show service status
     if systemctl is-active --quiet "${SERVICE_NAME}" 2>/dev/null; then

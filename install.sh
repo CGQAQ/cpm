@@ -244,8 +244,7 @@ get_latest_version() {
 
 download_and_install() {
     local version="${LATEST_VERSION}"
-    local version_num="${version#v}"
-    local archive_name="shadowsocks-${version_num}.${ARCH}-unknown-linux-${LIBC}.tar.xz"
+    local archive_name="shadowsocks-${version}.${ARCH}-unknown-linux-${LIBC}.tar.xz"
     local download_url="https://github.com/${SS_RUST_REPO}/releases/download/${version}/${archive_name}"
     local checksum_url="${download_url}.sha256"
 

@@ -672,6 +672,7 @@ main() {
     detect_libc
 
     show_banner
+    install_dependencies
 
     local is_installed=false
     if command_exists ssserver && [[ -f "${CONFIG_FILE}" ]]; then
@@ -693,7 +694,6 @@ main() {
 
         case "${choice}" in
             1)
-                install_dependencies
                 install_flow
                 ;;
             2)
@@ -722,7 +722,6 @@ main() {
 
         case "${choice}" in
             1)
-                install_dependencies
                 install_flow
                 ;;
             2)

@@ -15,7 +15,7 @@ SERVICE_NAME="shadowsocks-rust-server"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 BINARY_NAMES=("ssserver" "sslocal" "ssmanager" "ssurl" "ssservice")
 DEFAULT_PORT=8388
-SCRIPT_VERSION="2.0.1"
+SCRIPT_VERSION="2.0.2"
 DEFAULT_CIPHER="2022-blake3-aes-256-gcm"
 TEMP_DIR=""
 
@@ -34,7 +34,7 @@ PROTOCOL=""  # "ss2022" or "vless-reality"
 # --- Colors -------------------------------------------------------------------
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+YELLOW='\033[0;36m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 BOLD='\033[1m'
@@ -1124,16 +1124,6 @@ uninstall() {
         fi
     fi
 
-    # Remove installer script
-    if [[ -f /usr/bin/cpm ]]; then
-        if confirm "Remove /usr/bin/cpm?"; then
-            rm -f /usr/bin/cpm
-            msg_info "Installer script removed."
-        else
-            msg_info "Installer script kept at /usr/bin/cpm."
-        fi
-    fi
-
     msg_success "Shadowsocks-Rust has been uninstalled."
 }
 
@@ -1186,6 +1176,17 @@ uninstall_xray() {
     fi
 
     msg_success "Xray (VLESS+Reality) has been uninstalled."
+}
+
+maybe_remove_cpm_script() {
+    if ! is_ss_installed && ! is_xray_installed && [[ -f /usr/bin/cpm ]]; then
+        if confirm "No protocols remain. Remove /usr/bin/cpm?"; then
+            rm -f /usr/bin/cpm
+            msg_info "Installer script removed."
+        else
+            msg_info "Installer script kept at /usr/bin/cpm."
+        fi
+    fi
 }
 
 # --- Protocol Selection -------------------------------------------------------
@@ -1336,7 +1337,8 @@ show_help() {
     echo ""
     echo "Commands:"
     echo "  install       Install proxy (interactive wizard — SS2022 or VLESS+Reality)"
-    echo "  uninstall     Uninstall proxy"
+    echo "  uninstall     Uninstall proxy (choose which)"
+    echo "  uninstall-all Uninstall everything"
     echo "  start         Start proxy service(s)"
     echo "  stop          Stop proxy service(s)"
     echo "  restart       Restart proxy service(s)"
@@ -1452,6 +1454,22 @@ main() {
             else
                 msg_info "Nothing is installed."
             fi
+            maybe_remove_cpm_script
+            exit 0
+            ;;
+        uninstall-all)
+            check_root
+            detect_os
+            detect_arch
+            detect_distro
+            detect_libc
+            show_banner
+            if ! confirm "Uninstall everything?"; then
+                exit 0
+            fi
+            is_ss_installed && uninstall
+            is_xray_installed && uninstall_xray
+            maybe_remove_cpm_script
             exit 0
             ;;
         upgrade)
@@ -1577,6 +1595,7 @@ main() {
                 else
                     confirm "Uninstall VLESS+Reality?" && uninstall_xray
                 fi
+                maybe_remove_cpm_script
                 ;;
             0)
                 msg_info "Goodbye!"

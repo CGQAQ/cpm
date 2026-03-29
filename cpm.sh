@@ -15,7 +15,7 @@ SERVICE_NAME="shadowsocks-rust-server"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 BINARY_NAMES=("ssserver" "sslocal" "ssmanager" "ssurl" "ssservice")
 DEFAULT_PORT=8388
-SCRIPT_VERSION="2.0.0"
+SCRIPT_VERSION="2.0.1"
 DEFAULT_CIPHER="2022-blake3-aes-256-gcm"
 TEMP_DIR=""
 
@@ -661,8 +661,8 @@ generate_x25519_keypair() {
     msg_info "Generating x25519 keypair..."
     local output
     output="$(xray x25519)"
-    VLESS_PRIVATE_KEY="$(echo "${output}" | grep 'Private key:' | awk '{print $3}')"
-    VLESS_PUBLIC_KEY="$(echo "${output}" | grep 'Public key:' | awk '{print $3}')"
+    VLESS_PRIVATE_KEY="$(echo "${output}" | grep 'PrivateKey:' | awk '{print $2}')"
+    VLESS_PUBLIC_KEY="$(echo "${output}" | grep 'PublicKey)' | awk '{print $3}')"
     msg_success "x25519 keypair generated."
 }
 
@@ -1012,7 +1012,7 @@ show_existing_xray_config() {
     # Regenerate public key from private key
     local public_key=""
     if command_exists xray && [[ -n "${private_key}" ]]; then
-        public_key="$(xray x25519 -i "${private_key}" 2>/dev/null | grep 'Public key:' | awk '{print $3}')"
+        public_key="$(xray x25519 -i "${private_key}" 2>/dev/null | grep 'PublicKey)' | awk '{print $3}')"
     fi
 
     # Set globals for URI generation

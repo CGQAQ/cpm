@@ -1286,7 +1286,7 @@ install_flow() {
 
 install_script() {
     local target="/usr/bin/cpm"
-    local url="https://raw.githubusercontent.com/CGQAQ/ss-installer/main/cpm.sh?t=$(date +%s)"
+    local url="https://raw.githubusercontent.com/CGQAQ/cpm/main/cpm.sh?t=$(date +%s)"
 
     msg_info "Downloading cpm..."
     if curl -fsSL -o "${target}.tmp" "${url}"; then
@@ -1302,7 +1302,7 @@ install_script() {
 
 upgrade_script() {
     local target="/usr/bin/cpm"
-    local url="https://raw.githubusercontent.com/CGQAQ/ss-installer/main/cpm.sh?t=$(date +%s)"
+    local url="https://raw.githubusercontent.com/CGQAQ/cpm/main/cpm.sh?t=$(date +%s)"
 
     msg_info "Downloading latest cpm..."
     if curl -fsSL -o "${target}.tmp" "${url}"; then
